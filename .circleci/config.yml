@@ -54,7 +54,8 @@ jobs:
           name: build docker image
           command: |
             # Build docker image
-            ls 
+            ls -al
+            chmod +x run_docker.sh
             sudo ./run_docker.sh
           
 workflows:
