@@ -66,12 +66,12 @@ jobs:
           name: create kubernetes cluster
           command: |
             # using cli to be able to specify unique name for cluster
-            eksctl create cluster --name="capstone-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --region us-east-1 \
+            eksctl create cluster --name="uda-cap-cluster" \
+            --region=us-east-1 --zones=us-east-1a,us-east-1b \
             --nodes-min=6 --nodes-max=8 \
             --node-type=t3.medium
       - run:
-          name: create kubernetes cluster
+          name: deploy docker image to the cluster
           command: |
             #deploy docker image to the cluster
             kubectl apply -f deployment.yml
