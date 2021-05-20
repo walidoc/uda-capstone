@@ -37,19 +37,19 @@ jobs:
             . venv/bin/activate
             make lint    
 
-  build-docker-image:
-    docker:
-      - image: circleci/golang:1.15
+  # build-docker-image:
+  #   docker:
+  #     - image: circleci/golang:1.15
 
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 19.03.13
-      - run:
-          name: build docker image
-          command: |
-            # Build docker image
-            ./run_docker.sh
+  #   steps:
+  #     - checkout
+  #     - setup_remote_docker:
+  #         version: 19.03.13
+  #     - run:
+  #         name: build docker image
+  #         command: |
+  #           # Build docker image
+  #           ./run_docker.sh
           
 workflows:
   default:
