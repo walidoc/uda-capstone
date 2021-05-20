@@ -68,51 +68,26 @@ jobs:
           name: create kubernetes cluster
           command: |
             # using cli to be able to specify unique name for cluster
-            eksctl create cluster --name="uda-cap-${CIRCLE_WORKFLOW_ID:0:7}" \
+            eksctl create cluster --name="uda-cap-2" \
             --region=us-east-1 --zones=us-east-1a,us-east-1b \
             --node-type=t3.medium --ssh-access --ssh-public-key	uda-cap-key --managed
 
             #deploy docker image to the cluster
             kubectl apply -f deployment.yml
-            echo "Get Deployments ..."
-            kubectl get deployments
-
-            #view your cluster nodes
-            echo "Getting cluster nodes..."
-            kubectl get nodes -o wide
-            
-            #Get pods on cluster
-            echo "Getting pods..."
-            kubectl get pods --all-namespaces -o wide
-            
-            #list services
-            echo "Getting services..."
-            kubectl get services --sort-by=.metadata.name
-            
-            echo "Getting pods again..."
-            kubectl get pods --all-namespaces -o wide
-            
-            echo "Get Deployments ..."
+            echo "Get Deployments"
             kubectl get deployments
             
-            echo "Rolling deployment------"
+            echo "Rolling deployment"
             kubectl set image deployment/uda-cap uda-cap=walidoc/uda-cap:v2
             
-            echo "Rolling deployment status-----"
+            echo "Rolling deployment status"
             kubectl rollout status deployment/uda-cap
             
-            echo "Get Deployments after rolling updates-----"
+            echo "Get Deployments after rolling updates"
             kubectl get deployments
-            
-            echo "Check Rolling deployment status again------"
-            kubectl rollout status deployment/uda-cap
-      # - run:
-      #     name: deploy docker image to the cluster
-      #     command: |
-      #       #deploy docker image to the cluster
-      #       kubectl apply -f deployment.yml
-      #       echo "Get Deployments ..."
-      #       kubectl get deployments
+
+            #delete cluster
+            # eksctl delete cluster --name uda-cap --region us-east-2
 
 workflows:
   default:
