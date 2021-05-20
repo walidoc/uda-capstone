@@ -37,28 +37,28 @@ jobs:
             . venv/bin/activate
             make lint    
 
-  # build-docker-image:
-  #   docker:
-  #     - image: circleci/golang:1.15
+  build-docker-image:
+    docker:
+      - image: circleci/golang:1.15
 
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         keys:
-  #           - v1-dependencies-{{ checksum "requirements.txt" }}
-  #           # fallback to using the latest cache if no exact match is found
-  #           - v1-dependencies-
-  #     - setup_remote_docker:
-  #         version: 19.03.13
-  #     - run:
-  #         name: build docker image
-  #         command: |
-  #           # Build docker image
-  #           ./run_docker.sh
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - setup_remote_docker:
+          version: 19.03.13
+      - run:
+          name: build docker image
+          command: |
+            # Build docker image
+            ./run_docker.sh
           
 workflows:
   default:
     jobs:
       - lint-app
-      # - build-docker-image:
-      #     requires: [lint-app]
+      - build-docker-image:
+          requires: [lint-app]
