@@ -39,23 +39,17 @@ jobs:
 
   build-docker-image:
     docker:
-      - image: circleci/golang:1.15
+      - image: docker:17.05.0-ce-git
 
     steps:
       - checkout
-      # - restore_cache:
-      #     keys:
-      #       - v1-dependencies-{{ checksum "requirements.txt" }}
-      #       # fallback to using the latest cache if no exact match is found
-      #       - v1-dependencies-
-      - setup_remote_docker:
-          version: 19.03.13
+      - setup_remote_docker
       - run:
           name: build docker image
           command: |
             # Build docker image
-            ls -al
             chmod +x run_docker.sh
+            ls -al
             sudo ./run_docker.sh
           
 workflows:
