@@ -69,8 +69,7 @@ jobs:
             # using cli to be able to specify unique name for cluster
             eksctl create cluster --name="uda-cap-1" \
             --region=eu-central-1 \
-            # --zones=eu-central-1a,eu-central-1b \
-            --node-type=t3.medium
+            # --node-type=t3.medium
 
             #deploy docker image to the cluster
             kubectl apply -f deployment.yml
@@ -87,7 +86,7 @@ jobs:
             kubectl get deployments
 
             #delete cluster
-            # eksctl delete cluster --name uda-cap-1 --region us-east-1
+            # eksctl delete cluster --name uda-cap-1 --region eu-central-1
       - run:
           name: Delete cluster
           command: eksctl delete cluster --name uda-cap-1 --region eu-central-1
