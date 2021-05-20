@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  lint-app:
     docker:
     # Use the same Docker base as the project
       - image: python:3.7.3-stretch
@@ -36,3 +36,24 @@ jobs:
           command: |
             . venv/bin/activate
             make lint    
+
+  build-docker-image:
+    docker:
+      - image: circleci/golang:1.15
+
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+      - run:
+          name: build docker image
+          command: |
+            # Build docker image
+            ./run_docker.sh
+          
+workflows:
+  default:
+    jobs:
+      - lint-app
+      - build-docker-image:
+          requires: [lint-app]
