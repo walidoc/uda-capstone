@@ -4,9 +4,7 @@ jobs:
     docker:
     # Use the same Docker base as the project
       - image: python:3.7.3-stretch
-
     working_directory: ~/repo
-
     steps:
       - checkout
       # Download and cache dependencies
@@ -15,7 +13,6 @@ jobs:
             - v1-dependencies-{{ checksum "requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-
       - run:
           name: install dependencies
           command: |
@@ -29,7 +26,6 @@ jobs:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
-
       # run lint!
       - run:
           name: run lint
@@ -43,11 +39,12 @@ jobs:
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PWD 
+    working_directory: ~/repo
     steps:
       - checkout
       - setup_remote_docker
       - run:
-          name: build docker image
+          name: build and push docker image
           command: |
             # Build image and add a descriptive tag
             docker build --tag=uda-cap .
@@ -58,6 +55,28 @@ jobs:
             # Push image to a docker repository
             docker tag uda-cap walidoc/uda-cap
             docker push walidoc/uda-cap
+            
+  deploy-to-cluster:
+    docker:
+      - image: alpine/k8s:1.15.12
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: create kubernetes cluster
+          command: |
+            # using cli to be able to specify unique name for cluster
+            eksctl create cluster --name="capstone-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --region us-east-1 \
+            --nodes-min=6 --nodes-max=8 \
+            --node-type=t3.medium
+      - run:
+          name: create kubernetes cluster
+          command: |
+            #deploy docker image to the cluster
+            kubectl apply -f deployment.yml
+            echo "Get Deployments ..."
+            kubectl get deployments
 
 workflows:
   default:
@@ -65,3 +84,5 @@ workflows:
       - lint-app
       - build-push-docker-image:
           requires: [lint-app]
+      - deploy-to-cluster:
+          requires: [build-push-docker-image]
