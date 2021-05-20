@@ -70,7 +70,7 @@ jobs:
             # using cli to be able to specify unique name for cluster
             eksctl create cluster --name="uda-cap-${CIRCLE_WORKFLOW_ID:0:7}" \
             --region=us-east-1 --zones=us-east-1a,us-east-1b \
-            --node-type=t3.medium --ssh-access --ssh-public-key udapeople --managed
+            --node-type=t3.medium --ssh-access --ssh-public-key	uda-cap-key --managed
 
             #view your cluster nodes
             echo "Getting cluster nodes..."
