@@ -48,8 +48,8 @@ jobs:
           name: build docker image
           command: |
             # Build docker image
+            . venv/bin/activate
             chmod +x run_docker.sh
-            ls -al
             ./run_docker.sh
           
 workflows:
