@@ -50,7 +50,7 @@ jobs:
             # Build docker image
             chmod +x run_docker.sh
             ls -al
-            sudo ./run_docker.sh
+            ./run_docker.sh
           
 workflows:
   default:
