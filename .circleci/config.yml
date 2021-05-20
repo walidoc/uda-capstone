@@ -72,6 +72,11 @@ jobs:
             --region=us-east-1 --zones=us-east-1a,us-east-1b \
             --node-type=t3.medium --ssh-access --ssh-public-key	uda-cap-key --managed
 
+            #deploy docker image to the cluster
+            kubectl apply -f deployment.yml
+            echo "Get Deployments ..."
+            kubectl get deployments
+
             #view your cluster nodes
             echo "Getting cluster nodes..."
             kubectl get nodes -o wide
