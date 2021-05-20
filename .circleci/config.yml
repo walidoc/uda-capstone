@@ -43,19 +43,14 @@ jobs:
 
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "requirements.txt" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
       - setup_remote_docker
       - run:
           name: build docker image
           command: |
-            # Build docker image
-            . venv/bin/activate
-            chmod +x run_docker.sh
-            ./run_docker.sh
+            # chmod +x run_docker.sh
+            # ./run_docker.sh
+            docker build --tag=uda-cap .
+            docker image ls
           
 workflows:
   default:
