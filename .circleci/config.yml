@@ -62,16 +62,15 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints: ["dd:c3:62:b3:4e:04:de:b0:3c:60:59:89:33:38:76:c1:e7:16:48:18"]
       - run:
           name: create kubernetes cluster
           no_output_timeout: 30m
           command: |
             # using cli to be able to specify unique name for cluster
-            eksctl create cluster --name="uda-cap-2" \
-            --region=us-east-1 --zones=us-east-1a,us-east-1b \
-            --node-type=t3.medium --ssh-access --ssh-public-key	uda-cap-key --managed
+            eksctl create cluster --name="uda-cap-1" \
+            --region=eu-central-1 \
+            # --zones=eu-central-1a,eu-central-1b \
+            --node-type=t3.medium
 
             #deploy docker image to the cluster
             kubectl apply -f deployment.yml
@@ -88,7 +87,11 @@ jobs:
             kubectl get deployments
 
             #delete cluster
-            # eksctl delete cluster --name uda-cap --region us-east-2
+            # eksctl delete cluster --name uda-cap-1 --region us-east-1
+      - run:
+          name: Delete cluster
+          command: eksctl delete cluster --name uda-cap-1 --region eu-central-1
+          when: on_fail
 
 workflows:
   default:
