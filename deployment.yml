@@ -6,7 +6,7 @@ metadata:
     app: uda-cap
   namespace: default
 spec:
-  replicas: 1
+  replicas: 2
   progressDeadlineSeconds: 3600
   selector:
     matchLabels:
@@ -28,18 +28,18 @@ spec:
           ports:
             - containerPort: 80
 
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: uda-cap
-#   labels:
-#     app: uda-cap
-# spec:
-#   type: LoadBalancer
-#   selector:
-#     app: uda-cap
-#   ports:
-#     - port: 80
-#       targetPort: 80
-#       protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uda-cap
+  labels:
+    app: uda-cap
+spec:
+  type: LoadBalancer
+  selector:
+    app: uda-cap
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
