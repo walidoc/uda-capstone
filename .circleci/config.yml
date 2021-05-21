@@ -67,9 +67,6 @@ jobs:
           get-rollout-status: true
           resource-file-path: deployment.yml
           resource-name: deployment/uda-cap
-      - aws-eks/delete-cluster:
-          cluster-name: uda-cap
-          when: on_fail
 
   check-cluster:
     executor: aws-eks/python3
