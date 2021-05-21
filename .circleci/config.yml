@@ -54,7 +54,7 @@ jobs:
             docker tag uda-cap walidoc/uda-cap
             docker push walidoc/uda-cap
     
-    deploy-to-aws:
+    deploy-to-cluster:
       docker:
         - image: amazon/aws-cli
       steps:
