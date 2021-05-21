@@ -53,41 +53,105 @@ jobs:
             # Push image to a docker repository
             docker tag uda-cap walidoc/uda-cap
             docker push walidoc/uda-cap
-            
-  deploy-to-cluster:
-    docker:
-      - image: alpine/k8s:1.15.12
-    steps:
-      - checkout
-      - run:
-          name: create kubernetes cluster
-          no_output_timeout: 30m
-          command: |
-            # using cli to be able to specify unique name for cluster
-            eksctl create cluster --name="uda-cap-1" \
-            --region=eu-central-1 \
-            # --node-type=t3.medium
+    
+    deploy-to-aws:
+      docker:
+        - image: amazon/aws-cli
+      steps:
+        - checkout
+        - run:
+            name: creating cluster using EKS and deploying docker image
+            command: |
+              #install dependencies
+              yum -y install tar gzip
+              
+              #installing kubectl
+              curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl
+              chmod +x ./kubectl
+              mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+              echo "kubectl version..."
+              kubectl version --short --client 
+              
+              #installing eksctl
+              curl --silent --location https://github.com/weaveworks/eksctl/releases/download/0.47.0/eksctl_Linux_amd64.tar.gz | tar xz -C /tmp
+              mv /tmp/eksctl /usr/local/bin
+              echo "eksctl version..."
+              eksctl version
+              
+              #creating cluster
+              eksctl create cluster --name="uda-cap-1" --region=eu-central-1
+              
+              #deploy docker image to the cluster
+              kubectl apply -f deployment.yml
+              
+              #view your cluster nodes
+              echo "Getting cluster nodes..."
+              kubectl get nodes -o wide
+              
+              #Get pods on cluster
+              echo "Getting pods..."
+              kubectl get pods --all-namespaces -o wide
+              
+              #list services
+              echo "Getting services..."
+              kubectl get services --sort-by=.metadata.name
+              
+              echo "Getting pods again..."
+              kubectl get pods --all-namespaces -o wide
+              
+              echo "Get Deployments ..."
+              kubectl get deployments
+              
+              echo "Rolling deployment------"
+              kubectl set image deployments/uda-cap uda-cap=walidoc/uda-cap:v2
+              
+              echo "Rolling deployment status-----"
+              kubectl rollout status deployment/uda-cap
+              
+              echo "Get Deployments after rolling updates-----"
+              kubectl get deployments
+              
+              echo "Check Rolling deployment status again------"
+              kubectl rollout status deployment/uda-cap
+        - run:
+            name: Delete cluster
+            command: eksctl delete cluster --name uda-cap-1 --region eu-central-1
+            when: on_fail
 
-            #deploy docker image to the cluster
-            kubectl apply -f deployment.yml
-            echo "Get Deployments =========="
-            kubectl get deployments
-            
-            echo "Rolling deployment ========"
-            kubectl set image deployments/uda-cap uda-cap=walidoc/uda-cap:v2
-            
-            echo "Rolling deployment status ============"
-            kubectl rollout status deployment/uda-cap
-            
-            echo "Get Deployments after rolling updates ==============="
-            kubectl get deployments
+  # deploy-to-cluster:
+  #   docker:
+  #     - image: alpine/k8s:1.15.12
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: create kubernetes cluster
+  #         no_output_timeout: 30m
+  #         command: |
+  #           # using cli to be able to specify unique name for cluster
+  #           eksctl create cluster --name="uda-cap-1" \
+  #           --region=eu-central-1 \
+  #           # --node-type=t3.medium
 
-            #delete cluster
-            # eksctl delete cluster --name uda-cap-1 --region eu-central-1
-      - run:
-          name: Delete cluster
-          command: eksctl delete cluster --name uda-cap-1 --region eu-central-1
-          when: on_fail
+  #           #deploy docker image to the cluster
+  #           kubectl apply -f deployment.yml
+  #           echo "Get Deployments =========="
+  #           kubectl get deployments
+            
+  #           echo "Rolling deployment ========"
+  #           kubectl set image deployments/uda-cap uda-cap=walidoc/uda-cap:v2
+            
+  #           echo "Rolling deployment status ============"
+  #           kubectl rollout status deployment/uda-cap
+            
+  #           echo "Get Deployments after rolling updates ==============="
+  #           kubectl get deployments
+
+  #           #delete cluster
+  #           # eksctl delete cluster --name uda-cap-1 --region eu-central-1
+  #     - run:
+  #         name: Delete cluster
+  #         command: eksctl delete cluster --name uda-cap-1 --region eu-central-1
+  #         when: on_fail
 
 workflows:
   default:
