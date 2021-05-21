@@ -124,12 +124,12 @@ workflows:
       - lint-app
       - build-push-docker-image:
           requires: [lint-app]
-      - aws-eks/create-cluster:
-          cluster-name: uda-cap
-          aws-region: eu-central-1
+      # - aws-eks/create-cluster:
+      #     cluster-name: uda-cap
+      #     aws-region: eu-central-1
       - deploy-to-cluster:
           cluster-name: uda-cap
-          requires: [aws-eks/create-cluster]
+          # requires: [aws-eks/create-cluster]
       - aws-eks/update-container-image:
           cluster-name: uda-cap
           container-image-updates: uda-cap=walidoc/uda-cap
