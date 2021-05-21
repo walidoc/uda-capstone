@@ -4,7 +4,6 @@ jobs:
     docker:
     # Use the same Docker base as the project
       - image: python:3.7.3-stretch
-    working_directory: ~/repo
     steps:
       - checkout
       # Download and cache dependencies
@@ -39,7 +38,6 @@ jobs:
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PWD 
-    working_directory: ~/repo
     steps:
       - checkout
       - setup_remote_docker
@@ -59,7 +57,6 @@ jobs:
   deploy-to-cluster:
     docker:
       - image: alpine/k8s:1.15.12
-    working_directory: ~/repo
     steps:
       - checkout
       - run:
@@ -73,16 +70,16 @@ jobs:
 
             #deploy docker image to the cluster
             kubectl apply -f deployment.yml
-            echo "Get Deployments"
+            echo "Get Deployments =========="
             kubectl get deployments
             
-            echo "Rolling deployment"
+            echo "Rolling deployment ========"
             kubectl set image deployments/uda-cap uda-cap=walidoc/uda-cap:v2
             
-            echo "Rolling deployment status"
+            echo "Rolling deployment status ============"
             kubectl rollout status deployment/uda-cap
             
-            echo "Get Deployments after rolling updates"
+            echo "Get Deployments after rolling updates ==============="
             kubectl get deployments
 
             #delete cluster
