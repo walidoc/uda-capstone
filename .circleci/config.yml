@@ -60,7 +60,7 @@ jobs:
           cluster-name: << parameters.cluster-name >>
           install-kubectl: true
       - kubernetes/create-or-update-resource:
-          get-rollout-status: true
+          # get-rollout-status: true
           resource-file-path: deployment.yml
           resource-name: deployment/uda-cap
 
@@ -124,11 +124,11 @@ workflows:
       - lint-app
       - build-push-docker-image:
           requires: [lint-app]
-      # - aws-eks/create-cluster:
-      #     cluster-name: uda-cap
+      - aws-eks/create-cluster:
+          cluster-name: uda-cap
       - deploy-to-cluster:
           cluster-name: uda-cap
-          # requires: [aws-eks/create-cluster]
+          requires: [aws-eks/create-cluster]
       - aws-eks/update-container-image:
           cluster-name: uda-cap
           container-image-updates: uda-cap=walidoc/uda-cap
