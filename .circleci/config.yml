@@ -85,39 +85,6 @@ orbs:
   aws-eks: circleci/aws-eks@1.0.3
   kubernetes: circleci/kubernetes@0.11.2
 
-  # deploy-to-cluster:
-  #   docker:
-  #     - image: alpine/k8s:1.15.12
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: create kubernetes cluster
-  #         no_output_timeout: 30m
-  #         command: |
-  #           # using cli to be able to specify unique name for cluster
-  #           eksctl create cluster --name="uda-cap-1" \
-  #           --region=eu-central-1 \
-  #           --node-type=t2.micro
-
-  #           #deploy docker image to the cluster
-  #           kubectl apply -f deployment.yml
-  #           echo "Get Deployments =========="
-  #           kubectl get deployments
-            
-  #           echo "Rolling deployment ========"
-  #           kubectl set image deployments/uda-cap uda-cap=walidoc/uda-cap:v2
-            
-  #           echo "Rolling deployment status ============"
-  #           kubectl rollout status deployment/uda-cap
-            
-  #           echo "Get Deployments after rolling updates ==============="
-  #           kubectl get deployments
-
-  #     - run:
-  #         name: Delete cluster
-  #         command: eksctl delete cluster --name uda-cap-1 --region eu-central-1
-  #         when: on_fail
-
 workflows:
   deployment:
     jobs:
